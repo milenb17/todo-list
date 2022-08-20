@@ -3,6 +3,13 @@ import {format, compareAsc} from 'date-fns'
 //import {todoBtnListener, formListener} from './addtodos.js';
 //import {loadTodos, displayTodo} from './loadtodos.js';
 
+// object holding todoLists
+const mainList = (function() {
+    const home = todoList();
+    const projects = {};
+    let mode = "Home";
+   return {home, projects, mode}; 
+})();
 
 // todolist factory function
 const todoList = function() {
@@ -19,13 +26,7 @@ const todoList = function() {
     return{array, add, remove};
 };
 
-// object holding lists of projects
-const mainList = (function() {
-    const home = todoList();
-    const projects = {};
-    let mode = "Home";
-   return {home, projects, mode}; 
-})();
+
 
 
 
@@ -37,11 +38,32 @@ function loadProjectSideBar() {
     projects.textContent = "Projects";
     for (let key in mainList.projects) {
         let newdiv = document.createElement('div');
-        newdiv.textContent = key;
+        newdiv.setAttribute('style', 'display: flex;');
+        let name = document.createElement('div');
+        name.textContent = key;
+        newdiv.appendChild(name);
+        let deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete');
+        deleteBtn.textContent = 'X';
+        deleteBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (key === mainList.mode) {
+                mainList.mode = "Home";
+            }
+            delete mainList.projects[key];
+            mainList.home.array.forEach(todo => {
+                if (todo.project === key) {
+                    mainList.home.remove(todo);
+                }
+            })
+            loadPage();
+            loadProjectSideBar();
+        });
+        newdiv.appendChild(deleteBtn);
+        name.setAttribute('style', 'flex: 1;')
         projects.appendChild(newdiv);
-        newdiv.addEventListener('click', function(e) {
-            console.log(e.target.textContent);
-            mainList.mode = e.target.textContent;
+        newdiv.addEventListener('click', function() {
+            mainList.mode = key;
             loadPage();
         });
     }
@@ -50,7 +72,8 @@ function loadProjectSideBar() {
 // listener for when home clicked
 function homeListener() {
     const home = document.querySelector(".home");
-    home.addEventListener('click', function(e) {
+    home.addEventListener('click', function() {
+        let form = document.querySelector(".todoformdiv");
         mainList.mode = "Home";
         loadPage();
     });
@@ -99,6 +122,7 @@ function initPage() {
     addProjectListener();
     projectFormListener();
 }
+
 function loadPage() {
     const title = document.querySelector('.title');
     title.textContent = mainList.mode;
@@ -110,6 +134,7 @@ function loadPage() {
 
 // new file -- load all todos 
 function loadTodos() {
+    console.log(mainList.mode);
     const todos = document.querySelector('.todos');
     todos.innerHTML = '';
     if (mainList.mode === 'Home') {
@@ -147,7 +172,7 @@ function displayTodo(todo) {
     let deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete');
     deleteBtn.textContent = 'X';
-    deleteBtn.addEventListener('click', function(e) {
+    deleteBtn.addEventListener('click', function() {
         if (todo.project !== null) {
             mainList.projects[todo.project].remove(todo)
         }
