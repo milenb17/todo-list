@@ -3,13 +3,6 @@ import {format, compareAsc} from 'date-fns'
 //import {todoBtnListener, formListener} from './addtodos.js';
 //import {loadTodos, displayTodo} from './loadtodos.js';
 
-// object holding todoLists
-const mainList = (function() {
-    const home = todoList();
-    const projects = {};
-    let mode = "Home";
-   return {home, projects, mode}; 
-})();
 
 // todolist factory function
 const todoList = function() {
@@ -25,6 +18,14 @@ const todoList = function() {
     }
     return{array, add, remove};
 };
+// object holding todoLists
+const mainList = (function() {
+    const home = todoList();
+    const projects = {};
+    let mode = "Home";
+   return {home, projects, mode}; 
+})();
+
 
 
 
