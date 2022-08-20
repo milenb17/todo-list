@@ -1,6 +1,7 @@
 import './style.css'
 import {format, compareAsc} from 'date-fns'
-
+//import {todoBtnListener, formListener} from './addtodos.js';
+//import {loadTodos, displayTodo} from './loadtodos.js';
 
 
 // todolist factory function
@@ -18,7 +19,68 @@ const todoList = function() {
     return{array, add, remove};
 };
 
+// object holding lists of projects
+const mainList = (function() {
+    const home = todoList();
+    const projects = {};
+    let mode = "Home";
+   return {home, projects, mode}; 
+})();
 
+
+
+
+// function to load projects sidebar
+function loadProjectSideBar() {
+    const projects = document.querySelector('.projects');
+    projects.innerHTML = '';
+    projects.textContent = "Projects";
+    for (let key in mainList.projects) {
+        let newdiv = document.createElement('div');
+        newdiv.textContent = key;
+        projects.appendChild(newdiv);
+        newdiv.addEventListener('click', function(e) {
+            console.log(e.target.textContent);
+            mainList.mode = e.target.textContent;
+            loadPage();
+        });
+    }
+}
+
+// listener for when home clicked
+function homeListener() {
+    const home = document.querySelector(".home");
+    home.addEventListener('click', function(e) {
+        mainList.mode = "Home";
+        loadPage();
+    });
+}
+//add project button
+function addProjectListener() {
+    const div = document.querySelector('.addproject');
+    div.addEventListener('click', function() {
+        let form = document.querySelector('.projectformdiv');
+        form.removeAttribute('hidden');
+    })
+}
+//add project form
+function projectFormListener() {
+    let btn = document.querySelector('#submitproject');
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        let project = document.querySelector('#project').value;
+        if (project == "") {
+            alert("Must fill in project name");
+        }
+        else {
+            mainList.projects[project] = todoList();
+            document.querySelector('#project').value = "";
+            let form = document.querySelector(".projectformdiv");
+            form.setAttribute('hidden', '');
+            loadProjectSideBar();
+        } 
+    });
+}
 
 const todoFactory = function(title, dueDate, priority, complete=false, project=null) {
     return {title, dueDate, priority, complete, project};
@@ -26,24 +88,40 @@ const todoFactory = function(title, dueDate, priority, complete=false, project=n
 
 
 
+function initPage() {
+    const title = document.querySelector('.title');
+    title.textContent = "Home";
+    loadTodos('Home');
+    todoBtnListener();
+    formListener();
+    loadProjectSideBar();
+    homeListener();
+    addProjectListener();
+    projectFormListener();
+}
+function loadPage() {
+    const title = document.querySelector('.title');
+    title.textContent = mainList.mode;
+    loadTodos();
+}
+
+
+
+
 // new file -- load all todos 
-// modify to load todos of specified list
 function loadTodos() {
     const todos = document.querySelector('.todos');
     todos.innerHTML = '';
-    for (let todo of main.array) {
-        displayTodo(todo);
+    if (mainList.mode === 'Home') {
+        for (let todo of mainList.home.array) {
+            displayTodo(todo);
+        }
     }
-}
-
-//modify to load specified project
-function loadHome() {
-    console.log('loadhome');
-    const title = document.querySelector('.title');
-    title.textContent = 'Home';
-    loadTodos();
-    todoBtnListener();
-    formListener();
+    else {
+        for (let todo of mainList.projects[mainList.mode].array) {
+            displayTodo(todo);
+        }
+    }
 }
 
 // function to display a singular todo item;
@@ -57,13 +135,25 @@ function displayTodo(todo) {
         check.setAttribute('checked', '');
     }
     let title = document.createElement('div');
-    title.textContent = todo.title;
+    if (mainList.mode === 'Home' && todo.project !== null) {
+        title.textContent = `${todo.title} (${todo.project})`;
+    }
+    else {
+        title.textContent = `${todo.title}`;
+    }
     title.setAttribute('style', 'flex: 1');
     let date = document.createElement('div');
     date.textContent = todo.dueDate.toUTCString().substring(0,16);
     let deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete');
     deleteBtn.textContent = 'X';
+    deleteBtn.addEventListener('click', function(e) {
+        if (todo.project !== null) {
+            mainList.projects[todo.project].remove(todo)
+        }
+        mainList.home.remove(todo);
+        loadTodos();
+    });
     let priority = todo.priority;
     newdiv.classList.add(`${priority}`);
     newdiv.appendChild(check);
@@ -74,13 +164,14 @@ function displayTodo(todo) {
     todos.appendChild(newdiv);
 }
 
+//addtodosfile
 // function to display form to add todo
 function todoBtnListener() {
     console.log('addtodobtn');
     let div = document.querySelector('.add>div');
     div.addEventListener('click',function() {
         console.log('todoclicked');
-        let form = document.querySelector('.formdiv');
+        let form = document.querySelector('.todoformdiv');
         form.removeAttribute('hidden');
     })
 }
@@ -99,11 +190,17 @@ function formListener() {
             alert("Must fill in title, date and priority");
         }
         else {
-            main.add(todoFactory(title, date, priority, false));
+            if (mainList.mode !== 'Home') {
+                mainList.home.add(todoFactory(title, date, priority, false, mainList.mode));
+                mainList.projects[mainList.mode].add(todoFactory(title, date, priority, false, mainList.mode));
+            }
+            else {
+                mainList.home.add(todoFactory(title, date, priority, false));
+            }
             document.querySelector('#title').value = "";
             document.querySelector('#date').value = "";
             document.querySelector('#priority').selectedIndex = 0;
-            let form = document.querySelector(".formdiv");
+            let form = document.querySelector(".todoformdiv");
             form.setAttribute('hidden', '');
             loadTodos();
         }
@@ -114,8 +211,4 @@ function formListener() {
 
 
 
-
-
-
-const main = todoList();
-loadHome();
+initPage();

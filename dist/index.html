@@ -16,7 +16,13 @@
                 <div class="today">Today</div>
                 <div class="week">This Week</div>
             </div>
-            <div class="projects">Projects</div>
+            <div class="projects"></div>
+            <div class="addproject">+ Add a Project</div>
+            <div class="projectformdiv" hidden>
+                <label for="project">*Project:</label>
+                <input id="project" required>
+                <button id="submitproject">Add</button>
+            </div>
         </div>
         <div class="main">
             <div class="title"></div>
@@ -24,7 +30,7 @@
             <div class="add">
                 <div>+ Add a Todo</div>
             </div>
-            <div class='formdiv' hidden>
+            <div class='todoformdiv' hidden>
                 <label for="title">*Todo:</label>
                 <input id="title" required>
                 <label for="date">*Due Date:</label>

@@ -21,6 +21,7 @@ body {
 .sidebar {
     width: 250px;
     background-color: darkgray;
+    padding: 32px;
 }
 
 .main {
@@ -32,6 +33,11 @@ body {
 
 .todo {
     display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #E8E8E8;
 }
 
 .todos>div:hover, .add:hover {
@@ -41,6 +47,7 @@ body {
     border: none;
     background-color: inherit;
     font-weight: 900;
+    border-radius: 4px;
 }
 
 .high {
@@ -51,4 +58,54 @@ body {
 }
 .low {
     border-left: 5px solid green;
+}
+
+.all>div {
+    margin-bottom: 8px;
+    padding: 4px;
+    border-radius: 4px;
+}
+.all>div:hover {
+    background-color: gray;
+}
+
+.projects {
+    margin: 32px 0px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.projects>div {
+    font-weight: 400;
+    font-size: 1rem;
+    margin: 8px 0px;
+    padding: 4px;
+    border-radius: 4px;
+}
+.projects>div:hover {
+    background-color: gray;
+}
+
+.addproject {
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 4px;
+}
+.addproject:hover {
+    background-color: gray;
+}
+
+.title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.add {
+    padding: 4px;
+    border-radius: 4px;
+    margin: 32px 0px;
+}
+.delete:hover {
+    background-color: red;
 }
