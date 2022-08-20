@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <div class="header">Todo List</div>
+    <div class="middle">
+        <div class="sidebar">
+            <div class="all">
+                <div class="home">Home</div>
+                <div class="today">Today</div>
+                <div class="week">This Week</div>
+            </div>
+            <div class="projects">Projects</div>
+        </div>
+        <div class="main">
+            <div class="title"></div>
+            <div class="todos"></div>
+            <div class="add">
+                <div>+ Add a Todo</div>
+            </div>
+            <div class='formdiv' hidden>
+                <label for="title">*Todo:</label>
+                <input id="title" required>
+                <label for="date">*Due Date:</label>
+                <input type="date" required id="date">
+                <label for="priority">*Priority:</label>
+                <select id='priority' required>
+                    <option selected disabled></option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <button id="submit">Add</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
